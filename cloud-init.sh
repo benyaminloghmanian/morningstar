@@ -39,12 +39,12 @@ curl -s -L https://raw.githubusercontent.com/benyaminloghmanian/morningstar/main
 
 # CF DNS
 record_id=$(curl -s -X GET \
-  "https://api.cloudflare.com/client/v4/zones/${CFZONEID}/dns_records?type=A&name=${HOSTNAME}" \
+  "https://api.cloudflare.com/client/v4/zones/${CFZONEID}/dns_records?type=A&name=${FQDN}" \
   -H "Authorization: Bearer ${CFTOKEN}" \
   -H "Content-Type: application/json" \
   | jq -r '.result[0].id // empty')
 
-payload="{\"type\":\"A\",\"name\":\"${HOSTNAME}\",\"content\":\"${PIP_Address}\",\"proxied\":false}"
+payload="{\"type\":\"A\",\"name\":\"${FQDN}\",\"content\":\"${PIP_Address}\",\"proxied\":false}"
 
 if [ -n "$record_id" ]; then
   # Exists -> update
