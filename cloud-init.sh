@@ -38,6 +38,7 @@ chmod -x /etc/update-motd.d/91-contract-ua-esm-status
 curl -s -L https://raw.githubusercontent.com/benyaminloghmanian/morningstar/main/motd -o /etc/update-motd.d/00-ms-motd && chmod +x /etc/update-motd.d/00-ms-motd
 
 # CF DNS
+apt update && sudo apt install -y jq
 record_id=$(curl -s -X GET \
   "https://api.cloudflare.com/client/v4/zones/${CFZONEID}/dns_records?type=A&name=${FQDN}" \
   -H "Authorization: Bearer ${CFTOKEN}" \
@@ -82,11 +83,11 @@ curl -fsSL https://raw.githubusercontent.com/MHSanaei/3x-ui/main/install.sh -o /
 bash /tmp/install.sh </dev/null || true
 
 # Issue Let's Encrypt cert via acme.sh (standalone mode, needs :80 free)
-curl -fsSL https://get.acme.sh | sh -s email=admin@"$FQDN"
-~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+curl -fsSL https://get.acme.sh | sh -s email=admin@"$FQDN" >> /tmp/733
+~/.acme.sh/acme.sh --set-default-ca --server letsencrypt >> /tmp/733
 mkdir -p "$CERT_DIR"
-~/.acme.sh/acme.sh --issue -d "$FQDN" --standalone --keylength ec-256
-~/.acme.sh/acme.sh --installcert -d "$FQDN" --ecc --key-file "$CERT_DIR/privkey.pem" --fullchain-file "$CERT_DIR/fullchain.pem"
+~/.acme.sh/acme.sh --issue -d "$FQDN" --standalone --keylength ec-256 >> /tmp/733
+~/.acme.sh/acme.sh --installcert -d "$FQDN" --ecc --key-file "$CERT_DIR/privkey.pem" --fullchain-file "$CERT_DIR/fullchain.pem" >> /tmp/733
 
 # Configure x-ui via CLI
 x-ui stop
@@ -105,7 +106,6 @@ cat /dev/null > ~/.bash_history && history -c
 # Change SSH port
 echo "Port 733" | sudo tee /etc/ssh/sshd_config.d/port.conf
 systemctl disable --now ssh.socket 2>/dev/null
-systemctl enable --now ssh.service
-systemctl restart ssh
+systemctl enable --now ssh.service && systemctl restart ssh
 
 # "He who does God's will, will live forever." ~ Semper Fi, Secula Seculorum
