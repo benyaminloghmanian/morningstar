@@ -1,23 +1,24 @@
 #!/bin/bash
-cftoken=""
-cfzoneid=""
+CALLSIGN=""
+CFTOKEN=""
+CFZONEID=""
 
 while [ $# -gt 0 ]; do
     case "$1" in
-        --cftoken)   cftoken="$2";   shift 2 ;;
-        --cfzoneid) cfzoneid="$2"; shift 2 ;;
+        --CALLSIGN) CALLSIGN="$2"; shift 2 ;;
+        --CFTOKEN)  CFTOKEN="$2";  shift 2 ;;
+        --CFZONEID) CFZONEID="$2"; shift 2 ;;
         *) echo "Unknown option: $1" >&2; exit 1 ;;
     esac
 done
 
 # enforce mandatory
-if [ -z "$cftoken" ] || [ -z "$cfzoneid" ]; then
-    echo "Usage: $0 --cftoken <value> --cfzoneid <value>" >&2
+if [ -z "$CALLSIGN" ] || [ -z "$CFTOKEN" ] || [ -z "$CFZONEID" ]; then
+    echo "Usage: $0 --CALLSIGN <value> --CFTOKEN <value> --CFZONEID <value>" >&2
     exit 1
 fi
 
 # Variables
-CALLSIGN="fsn-alpha"
 TZ="Europe/Berlin"
 HOSTNAME="srv-ubuntu-${CALLSIGN}"
 FQDN="${HOSTNAME}.ms.eubits.com"
@@ -37,8 +38,8 @@ curl -s -L https://raw.githubusercontent.com/benyaminloghmanian/morningstar/main
 
 # CF DNS
 record_id=$(curl -s -X GET \
-  "https://api.cloudflare.com/client/v4/zones/${cfzoneid}/dns_records?type=A&name=${HOSTNAME}" \
-  -H "Authorization: Bearer ${cftoken}" \
+  "https://api.cloudflare.com/client/v4/zones/${CFZONEID}/dns_records?type=A&name=${HOSTNAME}" \
+  -H "Authorization: Bearer ${CFTOKEN}" \
   -H "Content-Type: application/json" \
   | jq -r '.result[0].id // empty')
 
@@ -47,15 +48,15 @@ payload="{\"type\":\"A\",\"name\":\"${HOSTNAME}\",\"content\":\"${PIP_Address}\"
 if [ -n "$record_id" ]; then
   # Exists -> update
   curl -s -X PUT \
-    "https://api.cloudflare.com/client/v4/zones/${cfzoneid}/dns_records/${record_id}" \
-    -H "Authorization: Bearer ${cftoken}" \
+    "https://api.cloudflare.com/client/v4/zones/${CFZONEID}/dns_records/${record_id}" \
+    -H "Authorization: Bearer ${CFTOKEN}" \
     -H "Content-Type: application/json" \
     --data "$payload"
 else
   # Doesn't exist -> create
   curl -s -X POST \
-    "https://api.cloudflare.com/client/v4/zones/${cfzoneid}/dns_records" \
-    -H "Authorization: Bearer ${cftoken}" \
+    "https://api.cloudflare.com/client/v4/zones/${CFZONEID}/dns_records" \
+    -H "Authorization: Bearer ${CFTOKEN}" \
     -H "Content-Type: application/json" \
     --data "$payload"
 fi | jq '.result | {id,name,content}'
