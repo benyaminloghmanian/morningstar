@@ -62,15 +62,23 @@ else
 fi | jq '.result | {id,name,content}'
 
 # Disallow direct root login
-printf "no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command=\"echo 'Please login as the user \\\"${ADMINUSER}\\\" rather than the user \\\"root\\\".';echo;sleep 10;exit 142\" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp0nSfBbg6QGXSpFcQAcY/scXVlBN0/MyGcIOgokX2Y" > /root/.ssh/authorized_keys
+SSHKEY=$(cat /root/.ssh/authorized_keys)
+printf "no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command=\"echo 'Please login as the user \\\"${ADMINUSER}\\\" rather than the user \\\"root\\\".';echo;sleep 10;exit 142\" ${SSHKEY}\n" > /root/.ssh/authorized_keys
 
 # Create admin user
 useradd -m -s /bin/bash $ADMINUSER
 usermod -aG sudo $ADMINUSER
 mkdir -p /home/$ADMINUSER/.ssh
-echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp0nSfBbg6QGXSpFcQAcY/scXVlBN0/MyGcIOgokX2Y ben@Bens-Mac.local' | tee /home/$ADMINUSER/.ssh/authorized_keys
+echo "${SSHKEY}" | tee /home/$ADMINUSER/.ssh/authorized_keys
 chmod 700 /home/$ADMINUSER/.ssh/
 chmod 600 /home/$ADMINUSER/.ssh/authorized_keys
 chown -R $ADMINUSER:$ADMINUSER /home/$ADMINUSER/.ssh
 echo "${ADMINUSER} ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/$ADMINUSER
 sudo chmod 440 /etc/sudoers.d/$ADMINUSER
+
+# Clean after cloud-init.sh
+rm -f /tmp/cloud-init.sh
+rm -rf /var/lib/cloud/
+rm -f /var/log/cloud-init.log /var/log/cloud-init-output.log
+cloud-init clean --logs --seed
+cat /dev/null > ~/.bash_history && history -c
