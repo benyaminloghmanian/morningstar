@@ -22,6 +22,7 @@ fi
 TZ="Europe/Berlin"
 HOSTNAME="srv-ubuntu-${CALLSIGN}"
 FQDN="${HOSTNAME}.ms.eubits.com"
+CERT_DIR="/root/cert/${FQDN}"
 PIP_Address=$(curl -4 -s https://api.ipify.org)
 ADMINUSER="${HOSTNAME}-root"
 
@@ -76,9 +77,35 @@ chown -R $ADMINUSER:$ADMINUSER /home/$ADMINUSER/.ssh
 echo "${ADMINUSER} ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/$ADMINUSER
 sudo chmod 440 /etc/sudoers.d/$ADMINUSER
 
+# Install x-ui non-interactively 
+curl -fsSL https://raw.githubusercontent.com/MHSanaei/3x-ui/main/install.sh -o /tmp/install.sh
+bash /tmp/install.sh </dev/null || true
+
+# Issue Let's Encrypt cert via acme.sh (standalone mode, needs :80 free)
+curl -fsSL https://get.acme.sh | sh -s email=admin@"$HOSTNAME"
+~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+mkdir -p "$CERT_DIR"
+~/.acme.sh/acme.sh --issue -d "$HOSTNAME" --standalone --keylength ec-256
+~/.acme.sh/acme.sh --installcert -d "$HOSTNAME" --ecc \
+  --key-file       "$CERT_DIR/privkey.pem" \
+  --fullchain-file "$CERT_DIR/fullchain.pem" \
+  --reloadcmd      "x-ui restart"
+
+# Configure x-ui via CLI
+x-ui stop
+/usr/local/x-ui/x-ui setting -username "5CogXckNx5" -password "HFYzCsxg7q"
+/usr/local/x-ui/x-ui setting -port 13000
+/usr/local/x-ui/x-ui setting -webBasePath "zQGMx3X967"
+/usr/local/x-ui/x-ui cert -webCert "$CERT_DIR/fullchain.pem" -webCertKey "$CERT_DIR/privkey.pem"
+x-ui start
+/usr/local/x-ui/x-ui setting -show true
+
 # Clean after cloud-init.sh
 rm -f /tmp/cloud-init.sh
 rm -rf /var/lib/cloud/
 rm -f /var/log/cloud-init.log /var/log/cloud-init-output.log
 cloud-init clean --logs --seed
 cat /dev/null > ~/.bash_history && history -c
+
+
+# He who does God's will, will live forever. ~ Semper Fi, Secula Seculorum
