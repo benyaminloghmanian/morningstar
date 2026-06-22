@@ -82,11 +82,11 @@ curl -fsSL https://raw.githubusercontent.com/MHSanaei/3x-ui/main/install.sh -o /
 bash /tmp/install.sh </dev/null || true
 
 # Issue Let's Encrypt cert via acme.sh (standalone mode, needs :80 free)
-curl -fsSL https://get.acme.sh | sh -s email=admin@"$HOSTNAME"
+curl -fsSL https://get.acme.sh | sh -s email=admin@"$FQDN"
 ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 mkdir -p "$CERT_DIR"
-~/.acme.sh/acme.sh --issue -d "$HOSTNAME" --standalone --keylength ec-256
-~/.acme.sh/acme.sh --installcert -d "$HOSTNAME" --ecc \
+~/.acme.sh/acme.sh --issue -d "$FQDN" --standalone --keylength ec-256
+~/.acme.sh/acme.sh --installcert -d "$FQDN" --ecc \
   --key-file       "$CERT_DIR/privkey.pem" \
   --fullchain-file "$CERT_DIR/fullchain.pem" \
   --reloadcmd      "x-ui restart"
