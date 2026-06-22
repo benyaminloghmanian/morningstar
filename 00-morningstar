@@ -1,0 +1,17 @@
+#!/bin/sh
+cat <<'EOF'
+┏┓    •      ┳┳┓      •          
+┃┃┏┓┏┓┓┏┓┏╋  ┃┃┃┏┓┏┓┏┓┓┏┓┏┓┏╋┏┓┏┓
+┣┛┛ ┗┛┃┗ ┗┗  ┛ ┗┗┛┛ ┛┗┗┛┗┗┫┛┗┗┻┛ 
+      ┛                   ┛      
+EOF
+
+HOSTNAME=$(hostname)
+[ -r /etc/lsb-release ] && . /etc/lsb-release
+PIPv4_Address=$(curl -4 -s https://api.ipify.org)
+
+echo "+----------------------------------------+"
+printf "| %-38s |\n" "Hostname: $HOSTNAME"
+printf "| %-38s |\n" "OS: $DISTRIB_DESCRIPTION"
+printf "| %-38s |\n" "PIP_v4: $PIPv4_Address"
+echo "+----------------------------------------+"
