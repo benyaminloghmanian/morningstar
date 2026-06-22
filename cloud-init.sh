@@ -86,10 +86,7 @@ curl -fsSL https://get.acme.sh | sh -s email=admin@"$FQDN"
 ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 mkdir -p "$CERT_DIR"
 ~/.acme.sh/acme.sh --issue -d "$FQDN" --standalone --keylength ec-256
-~/.acme.sh/acme.sh --installcert -d "$FQDN" --ecc \
-  --key-file       "$CERT_DIR/privkey.pem" \
-  --fullchain-file "$CERT_DIR/fullchain.pem" \
-  --reloadcmd      "x-ui restart"
+~/.acme.sh/acme.sh --installcert -d "$FQDN" --ecc --key-file "$CERT_DIR/privkey.pem" --fullchain-file "$CERT_DIR/fullchain.pem"
 
 # Configure x-ui via CLI
 x-ui stop
@@ -101,9 +98,8 @@ x-ui start
 /usr/local/x-ui/x-ui setting -show true
 
 # Clean after cloud-init.sh
-rm -f /tmp/cloud-init.sh
+rm -f /tmp/cloud-init.sh /var/log/cloud-init.log /var/log/cloud-init-output.log
 rm -rf /var/lib/cloud/
-rm -f /var/log/cloud-init.log /var/log/cloud-init-output.log
 cloud-init clean --logs --seed
 cat /dev/null > ~/.bash_history && history -c
 rm -f /tmp/install.sh
