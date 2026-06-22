@@ -95,14 +95,12 @@ x-ui stop
 /usr/local/x-ui/x-ui setting -webBasePath "zQGMx3X967"
 /usr/local/x-ui/x-ui cert -webCert "$CERT_DIR/fullchain.pem" -webCertKey "$CERT_DIR/privkey.pem"
 x-ui start
-/usr/local/x-ui/x-ui setting -show true
 
 # Clean after cloud-init.sh
-rm -f /tmp/cloud-init.sh /var/log/cloud-init.log /var/log/cloud-init-output.log
+rm -f /tmp/cloud-init.sh /var/log/cloud-init.log /var/log/cloud-init-output.log /tmp/install.sh
 rm -rf /var/lib/cloud/
 cloud-init clean --logs --seed
 cat /dev/null > ~/.bash_history && history -c
-rm -f /tmp/install.sh
 
 # Change SSH port
 echo "Port 733" | sudo tee /etc/ssh/sshd_config.d/port.conf
