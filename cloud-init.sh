@@ -114,4 +114,4 @@ systemctl disable --now ssh.socket 2>/dev/null
 systemctl enable --now ssh.service
 systemctl restart ssh
 
-# He who does God's will, will live forever. ~ Semper Fi, Secula Seculorum
+# "He who does God's will, will live forever." ~ Semper Fi, Secula Seculorum
