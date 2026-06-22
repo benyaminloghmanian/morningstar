@@ -108,4 +108,10 @@ cloud-init clean --logs --seed
 cat /dev/null > ~/.bash_history && history -c
 rm -f /tmp/install.sh
 
+# Change SSH port
+echo "Port 733" | sudo tee /etc/ssh/sshd_config.d/port.conf
+systemctl disable --now ssh.socket 2>/dev/null
+systemctl enable --now ssh.service
+systemctl restart ssh
+
 # He who does God's will, will live forever. ~ Semper Fi, Secula Seculorum
