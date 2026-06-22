@@ -62,7 +62,7 @@ else
 fi | jq '.result | {id,name,content}'
 
 # Disallow direct root login
-printf "no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command=\"echo 'Please login as the user \\\"${ADMINUSER}\\\" rather than the user \\\"root\\\".';echo;sleep 10;exit 142\" " | cat - /root/.ssh/authorized_keys > ./tmp && mv ./tmp /root/.ssh/authorized_keys
+printf "no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command=\"echo 'Please login as the user \\\"${ADMINUSER}\\\" rather than the user \\\"root\\\".';echo;sleep 10;exit 142\" ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp0nSfBbg6QGXSpFcQAcY/scXVlBN0/MyGcIOgokX2Y" > /root/.ssh/authorized_keys
 
 # Create admin user
 useradd -m -s /bin/bash $ADMINUSER
