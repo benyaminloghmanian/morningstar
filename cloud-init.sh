@@ -16,6 +16,4 @@ if [ -z "$cf-api-token" ] || [ -z "$cf-zone-id" ]; then
     exit 1
 fi
 
-echo "cf-api-token=$cf-api-token cf-zone-id=$cf-zone-id"
-
-curl -fsSL https://raw.githubusercontent.com/benyaminloghmanian/morningstar/main/cloud-init.sh -o /tmp/cloud-init.sh && bash /tmp/cloud-init.sh
+echo "cf-api-token=${cf-api-token} cf-zone-id=${cf-zone-id}"
