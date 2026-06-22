@@ -83,11 +83,12 @@ curl -fsSL https://raw.githubusercontent.com/MHSanaei/3x-ui/main/install.sh -o /
 bash /tmp/install.sh </dev/null || true
 
 # Issue Let's Encrypt cert via acme.sh (standalone mode, needs :80 free)
-curl -fsSL https://get.acme.sh | sh -s email=admin@"$FQDN" >> /tmp/733
-~/.acme.sh/acme.sh --set-default-ca --server letsencrypt >> /tmp/733
+export HOME=/root
+curl -fsSL https://get.acme.sh | sh -s email=admin@"$FQDN"
+/root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
 mkdir -p "$CERT_DIR"
-~/.acme.sh/acme.sh --issue -d "$FQDN" --standalone --keylength ec-256 >> /tmp/733
-~/.acme.sh/acme.sh --installcert -d "$FQDN" --ecc --key-file "$CERT_DIR/privkey.pem" --fullchain-file "$CERT_DIR/fullchain.pem" >> /tmp/733
+/root/.acme.sh/acme.sh --issue -d "$FQDN" --standalone --keylength ec-256
+/root/.acme.sh/acme.sh --installcert -d "$FQDN" --ecc --key-file "$CERT_DIR/privkey.pem" --fullchain-file "$CERT_DIR/fullchain.pem"
 
 # Configure x-ui via CLI
 x-ui stop
@@ -106,6 +107,7 @@ cat /dev/null > ~/.bash_history && history -c
 # Change SSH port
 echo "Port 733" | sudo tee /etc/ssh/sshd_config.d/port.conf
 systemctl disable --now ssh.socket 2>/dev/null
-systemctl enable --now ssh.service && systemctl restart ssh
+systemctl enable --now ssh.service
+systemctl restart ssh
 
 # "He who does God's will, will live forever." ~ Semper Fi, Secula Seculorum
