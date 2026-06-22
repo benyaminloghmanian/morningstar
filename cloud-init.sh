@@ -62,7 +62,7 @@ else
 fi | jq '.result | {id,name,content}'
 
 # Disallow direct root login
-printf "no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command=\"echo 'Please login as the user \\\"${ADMINUSER}\\\" rather than the user \\\"root\\\".';echo;sleep 10;exit 142\" " | cat - /root/.ssh/authorized_keys > tmp && mv tmp /root/.ssh/authorized_keys
+printf "no-port-forwarding,no-agent-forwarding,no-X11-forwarding,command=\"echo 'Please login as the user \\\"${ADMINUSER}\\\" rather than the user \\\"root\\\".';echo;sleep 10;exit 142\" " | cat - /root/.ssh/authorized_keys > ./tmp && mv ./tmp /root/.ssh/authorized_keys
 
 # Create admin user
 useradd -m -s /bin/bash $ADMINUSER
@@ -72,5 +72,5 @@ echo 'ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOp0nSfBbg6QGXSpFcQAcY/scXVlBN0/MyGcIO
 chmod 700 /home/$ADMINUSER/.ssh/
 chmod 600 /home/$ADMINUSER/.ssh/authorized_keys
 chown -R $ADMINUSER:$ADMINUSER /home/$ADMINUSER/.ssh
-echo '$ADMINUSER ALL=(ALL) NOPASSWD:ALL' | sudo tee /etc/sudoers.d/$ADMINUSER
+echo "${ADMINUSER} ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/$ADMINUSER
 sudo chmod 440 /etc/sudoers.d/$ADMINUSER
