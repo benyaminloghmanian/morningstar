@@ -106,6 +106,6 @@ rm -rf /var/lib/cloud/
 rm -f /var/log/cloud-init.log /var/log/cloud-init-output.log
 cloud-init clean --logs --seed
 cat /dev/null > ~/.bash_history && history -c
-
+rm -f /tmp/install.sh
 
 # He who does God's will, will live forever. ~ Semper Fi, Secula Seculorum
