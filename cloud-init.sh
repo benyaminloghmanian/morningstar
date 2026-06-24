@@ -20,7 +20,7 @@ fi
 
 # Variables
 TZ="Europe/Berlin"
-HOSTNAME="{CALLSIGN}"
+HOSTNAME="${CALLSIGN}"
 FQDN="${HOSTNAME}.ms.eubits.com"
 CERT_DIR="/root/cert/${FQDN}"
 PIP_Address=$(curl -4 -s https://api.ipify.org)
@@ -45,7 +45,7 @@ record_id=$(curl -s -X GET \
   -H "Content-Type: application/json" \
   | jq -r '.result[0].id // empty')
 
-payload="{\"type\":\"A\",\"name\":\"${FQDN}\",\"content\":\"${PIP_Address}\",\"proxied\":false}"
+payload="{\"type\":\"A\",\"name\":\"${FQDN}\",\"content\":\"${PIP_Address}\",\"content\":\"MS, ${CALLSIGN}\"\"proxied\":false}"
 
 if [ -n "$record_id" ]; then
   # Exists -> update
