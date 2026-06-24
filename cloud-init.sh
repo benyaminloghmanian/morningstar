@@ -20,7 +20,7 @@ fi
 
 # Variables
 TZ="Europe/Berlin"
-HOSTNAME="srv-ubuntu-${CALLSIGN}"
+HOSTNAME="{CALLSIGN}"
 FQDN="${HOSTNAME}.ms.eubits.com"
 CERT_DIR="/root/cert/${FQDN}"
 PIP_Address=$(curl -4 -s https://api.ipify.org)
