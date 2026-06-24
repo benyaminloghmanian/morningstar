@@ -45,7 +45,7 @@ record_id=$(curl -s -X GET \
   -H "Content-Type: application/json" \
   | jq -r '.result[0].id // empty')
 
-payload="{\"type\":\"A\",\"name\":\"${FQDN}\",\"content\":\"${PIP_Address}\",\"comment\":\"MS, ${CALLSIGN}\",\"proxied\":false}"
+payload="{\"type\":\"A\",\"name\":\"${FQDN}\",\"content\":\"${PIP_Address}\",\"comment\":\"MS, HZ\",\"proxied\":false}"
 
 if [ -n "$record_id" ]; then
   # Exists -> update
